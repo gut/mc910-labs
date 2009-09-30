@@ -19,6 +19,9 @@
 # Based on: http://www.pygame.org/wiki/OBJFileLoader
 
 from OpenGL.GL import *
+from OpenGL.GLUT import *
+from OpenGL.GLU import *
+from views_definition import *
 
 class Obj:
 	def __init__(self, filename):
@@ -31,6 +34,7 @@ class Obj:
 			if not values: continue
 			if values[0] == 'v':
 				v = map(float, values[1:4])
+				v[2] -= 4
 				self.vertices.append(v)
 			elif values[0] == 'f':
 				face = []
@@ -43,14 +47,44 @@ class Obj:
 					norms.append(0)
 				self.faces.append(face)
 	
-	def show(self):
-		self.gl_list = glGenLists(1)
-		glNewList(self.gl_list, GL_COMPILE)
-		glFrontFace(GL_CCW)
+	def show(self, scales, view):
+		if view is ESTRUTURA_DE_ARAME:
+			self.light([0,1,0])  # green
+			mode = GL_LINE_STRIP
+		elif view is SOMBREAMENTO_PLANO:
+			self.light([0.1,0.1,0.1])  # grey
+			mode = GL_TRIANGLES
+		elif view is ESTRUTURA_DE_ARAME_E_POLIGONOS:
+			self.show(scales, ESTRUTURA_DE_ARAME)
+			self.light([0.1,0.1,0.1])  # grey
+			mode = GL_TRIANGLES
+		elif view is SOMBREAMENTO_SUAVE:
+			self.light([1,0,0])  # red
+			mode = GL_TRIANGLES
+		elif view is SILHUETA:
+			self.light([1,1,0])  # yellow
+			mode = GL_TRIANGLES
+		elif view is SILHUETA_E_SOMBREAMENTO:
+			self.show(scales, SILHUETA)
+			self.light([1,1,0])  # yellow
+			mode = GL_TRIANGLES
 		for vertices in self.faces:
-			glBegin(GL_POLYGON)
-			for i in range(0, len(vertices)):
-				glVertex3fv(self.vertices[vertices[i] - 1])
+			glBegin(mode)
+			for vertex in vertices:
+				vertex_raw = self.vertices[vertex - 1]
+				# let's scale it
+				vertex_to_use = map(lambda x : x*scales, vertex_raw)
+				glVertex3fv(vertex_to_use)
 			glEnd()
-		glDisable(GL_TEXTURE_2D)
-		glEndList()
+
+	def light(self, color, alpha = 1.0):
+		"""Setup light 0 and enable lighting"""
+		color.append(alpha)
+		glLightfv(GL_LIGHT0, GL_AMBIENT, GLfloat_4(*color))
+		glLightfv(GL_LIGHT0, GL_DIFFUSE, GLfloat_4(1.0, 1.0, 1.0, alpha))
+		glLightfv(GL_LIGHT0, GL_SPECULAR, GLfloat_4(1.0, 1.0, 1.0, alpha))
+		glLightfv(GL_LIGHT0, GL_POSITION, GLfloat_4(1.0, 1.0, 1.0, 0.0))
+		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, GLfloat_4(0.2, 0.2, 0.2, alpha))
+		glEnable(GL_LIGHTING)
+		glEnable(GL_LIGHT0)
+

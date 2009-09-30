@@ -54,6 +54,17 @@ rotations = [0, 0, 0]
 
 # The object
 obj = None
+# views availables
+from views_definition import *
+views = [
+		ESTRUTURA_DE_ARAME,
+		SOMBREAMENTO_PLANO,
+		ESTRUTURA_DE_ARAME_E_POLIGONOS,
+		SOMBREAMENTO_SUAVE,
+		SILHUETA,
+		SILHUETA_E_SOMBREAMENTO,
+	]
+current_view = views[0]
 
 # A general OpenGL initialization function.  Sets all of the initial parameters. 
 def InitGL(Width, Height):				# We call this right after our OpenGL window is created.
@@ -86,19 +97,26 @@ def ReSizeGLScene(Width, Height):
 # The main drawing function. 
 def DrawGLScene():
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)	# Clear The Screen And The Depth Buffer
+	glLoadIdentity()  # Reset The View
+	glTranslatef(*positions)  # Move
+	glRotatef(rotations[0], 1.0,0.0,0.0)  # Rotate On It's X Axis
+	glRotatef(rotations[1], 0.0,1.0,0.0)  # Rotate On It's Y Axis
+	glRotatef(rotations[2], 0.0,0.0,1.0)  # Rotate On It's Z Axis
 	# loads our object
-	obj.show()
-	glCallList(obj.gl_list)
+	obj.show(scales, current_view)
 	# since this is double buffered, swap the buffers to display what just got drawn. 
 	glutSwapBuffers()
 
 # The function called whenever a key is pressed. Note the use of Python tuples to pass in: (key, x, y)  
 def keyPressed(*args):
 	# If escape is pressed, kill everything.
-	global scales
+	global scales, current_view
 	if args[0] == ESCAPE:
 		glutDestroyWindow(window)
 		sys.exit()
+	elif args[0] == SPACE:
+		# cicle through views
+		current_view = (views.index(current_view) + 1) % len(views)
 	elif args[0] == BIGGER:
 		scales += .1
 	elif args[0] == SMALLER:
