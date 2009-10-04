@@ -21,13 +21,15 @@
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
+from itertools import izip
 from views_definition import *
+from auxiliar import *
 
 class Obj:
 	def __init__(self, filename):
 		"""Loads a Wavefront OBJ file. """
-		self.vertices = []
-		self.faces = []
+		self.__obj_vertices = []
+		self.__obj_faces = []
 
 		for line in open(filename, "r"):
 			values = line.split()
@@ -35,7 +37,7 @@ class Obj:
 			if values[0] == 'v':
 				v = map(float, values[1:4])
 				v[2] -= 4
-				self.vertices.append(v)
+				self.__obj_vertices.append(v)
 			elif values[0] == 'f':
 				face = []
 				texcoords = []
@@ -45,7 +47,20 @@ class Obj:
 					face.append(int(w[0]))
 					texcoords.append(0)
 					norms.append(0)
-				self.faces.append(face)
+				self.__obj_faces.append(face)
+		self.generateDerivatedGeometry()
+	
+	def generateDerivatedGeometry(self):
+		"""Calculate before showing the object some more atributes"""
+		self.normals = []  # the vector for each face 
+		self.faces = []  # tuple of 3 vertices
+		for three_vertices in self.__obj_faces:
+			face = [self.__obj_vertices[vertex-1] for vertex in three_vertices]
+			self.faces.append(tuple(face))
+			v1 = getVectorFrom2Vertices(face[0], face[1])
+			v2 = getVectorFrom2Vertices(face[1], face[2])
+			normal = crossProduct(v1, v2)
+			self.normals.append(normal)
 	
 	def show(self, scales, view):
 		if view is ESTRUTURA_DE_ARAME:
@@ -60,7 +75,7 @@ class Obj:
 			mode = GL_TRIANGLES
 		elif view is SOMBREAMENTO_SUAVE:
 			self.light([1,0,0])  # red
-			mode = GL_TRIANGLES
+			mode = GL_POLYGON
 		elif view is SILHUETA:
 			self.light([1,1,0])  # yellow
 			mode = GL_TRIANGLES
@@ -68,12 +83,14 @@ class Obj:
 			self.show(scales, SILHUETA)
 			self.light([1,1,0])  # yellow
 			mode = GL_TRIANGLES
-		for vertices in self.faces:
+		for vertices, normal_vector in izip(self.faces, self.normals):
 			glBegin(mode)
 			for vertex in vertices:
-				vertex_raw = self.vertices[vertex - 1]
 				# let's scale it
-				vertex_to_use = map(lambda x : x*scales, vertex_raw)
+				vertex_scaled = map(lambda x : x*scales, vertex)
+				vertex_to_use = vertex_scaled
+				if view is SOMBREAMENTO_SUAVE:
+					glNormal3fv(normal_vector)
 				glVertex3fv(vertex_to_use)
 			glEnd()
 
