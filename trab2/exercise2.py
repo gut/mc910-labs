@@ -98,10 +98,10 @@ def ReSizeGLScene(Width, Height):
 def DrawGLScene():
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)	# Clear The Screen And The Depth Buffer
 	glLoadIdentity()  # Reset The View
-	glTranslatef(*positions)  # Move
 	glRotatef(rotations[0], 1.0,0.0,0.0)  # Rotate On It's X Axis
 	glRotatef(rotations[1], 0.0,1.0,0.0)  # Rotate On It's Y Axis
 	glRotatef(rotations[2], 0.0,0.0,1.0)  # Rotate On It's Z Axis
+	glTranslatef(*positions)  # Move
 	# loads our object
 	obj.show(scales, current_view)
 	# since this is double buffered, swap the buffers to display what just got drawn. 

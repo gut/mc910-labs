@@ -63,39 +63,43 @@ class Obj:
 			self.normals.append(normal)
 	
 	def show(self, scales, view):
+		# default mode, fallback
+		mode = GL_TRIANGLES
+		glLineWidth(1.0)
+
 		if view is ESTRUTURA_DE_ARAME:
 			self.light([0,1,0])  # green
 			mode = GL_LINE_STRIP
 		elif view is SOMBREAMENTO_PLANO:
 			self.light([0.1,0.1,0.1])  # grey
-			mode = GL_TRIANGLES
 		elif view is ESTRUTURA_DE_ARAME_E_POLIGONOS:
 			self.show(scales, ESTRUTURA_DE_ARAME)
 			self.light([0.1,0.1,0.1])  # grey
-			mode = GL_TRIANGLES
 		elif view is SOMBREAMENTO_SUAVE:
 			self.light([1,0,0])  # red
 			mode = GL_POLYGON
 		elif view is SILHUETA:
-			self.light([1,1,0])  # yellow
-			mode = GL_TRIANGLES
+			self.show(scales, SILHUETA_AUX)  # draws the non-ortogonal polys
+			self.light([1,1,1])  # white
+			glPolygonMode(GL_BACK, GL_LINE)
+			glLineWidth(5.0)
+		elif view is SILHUETA_AUX:
+			self.light([0,0,0])  # black
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 		elif view is SILHUETA_E_SOMBREAMENTO:
 			self.show(scales, SILHUETA)
 			self.light([1,1,0])  # yellow
-			mode = GL_TRIANGLES
+
 		for vertices, normal_vector in izip(self.faces, self.normals):
-			glBegin(mode)
-			for vertex in vertices:
-				# let's scale it
-				vertex_scaled = map(lambda x : x*scales, vertex)
-				vertex_to_use = vertex_scaled
-				if view is SOMBREAMENTO_SUAVE:
-					glNormal3fv(normal_vector)
-				glVertex3fv(vertex_to_use)
-			glEnd()
+			if view is SOMBREAMENTO_SUAVE:
+				drawVertices(mode, vertices, scales, normal_vector)
+			else:
+				drawVertices(mode, vertices, scales)
 
 	def light(self, color, alpha = 1.0):
 		"""Setup light 0 and enable lighting"""
+		glColor3f(*color)
+		return
 		color.append(alpha)
 		glLightfv(GL_LIGHT0, GL_AMBIENT, GLfloat_4(*color))
 		glLightfv(GL_LIGHT0, GL_DIFFUSE, GLfloat_4(1.0, 1.0, 1.0, alpha))

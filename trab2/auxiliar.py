@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from OpenGL.GL import *
 
 def getVectorFrom2Vertices(v1, v2):
 	"""Generates a vector calculating @v2 - @v1"""
@@ -28,4 +29,17 @@ def crossProduct(v1, v2):
 		v1[2] * v2[0] - v1[0] * v2[2],
 		v1[0] * v2[1] - v1[1] * v2[0]
 	)
+
+def drawVertices(mode, vertices, scales, normal_vector = False):
+	"""Draw the @vertices within the @mode declared on glBegin.
+	Also declare a glNormal3fv if @normal_vector is given"""
+	glBegin(mode)
+	if normal_vector:
+		glNormal3fv(normal_vector)
+	for vertex in vertices:
+		# let's scale it
+		vertex_scaled = map(lambda x : x*scales, vertex)
+		vertex_to_use = vertex_scaled
+		glVertex3fv(vertex_to_use)
+	glEnd()
 
