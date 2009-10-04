@@ -117,6 +117,7 @@ def keyPressed(*args):
 	elif args[0] == SPACE:
 		# cicle through views
 		current_view = (views.index(current_view) + 1) % len(views)
+		print " Switching view to: %s" % views_name[current_view]
 	elif args[0] == BIGGER:
 		scales += .1
 	elif args[0] == SMALLER:
@@ -244,6 +245,7 @@ Try `%s --help' for more information""" % args[0].split(sep)[-1]
 	print "Commands:"
 	print "========="
 	print "ESC key: Quit."
+	print "SPACE key: Switches the view."
 	print "+ key: Makes the object bigger."
 	print "- key: Makes the object smaller."
 	print "ARROW keys: Moves the object."

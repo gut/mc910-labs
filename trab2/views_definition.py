@@ -30,5 +30,14 @@ SOMBREAMENTO_SUAVE = __c.next()
 SILHUETA = __c.next()
 SILHUETA_E_SOMBREAMENTO = __c.next()
 
+views_name = {
+	ESTRUTURA_DE_ARAME : "estrutura de arame",
+	SOMBREAMENTO_PLANO : "sombreamento plano",
+	ESTRUTURA_DE_ARAME_E_POLIGONOS : "estrutura de arame e poligonos",
+	SOMBREAMENTO_SUAVE : "sombreamento suave",
+	SILHUETA : "silhueta",
+	SILHUETA_E_SOMBREAMENTO : "silhueta e sombreamento",
+}
+
 # auxiliary definitions (declared after because of the CYCLING algorithm (search SPACE on exercise2.py)
 SILHUETA_AUX = __c.next()  # used on SILHUETA
