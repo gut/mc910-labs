@@ -28,5 +28,7 @@ SOMBREAMENTO_PLANO = __c.next()
 ESTRUTURA_DE_ARAME_E_POLIGONOS = __c.next()
 SOMBREAMENTO_SUAVE = __c.next()
 SILHUETA = __c.next()
-SILHUETA_AUX = __c.next()  # used on SILHUETA
 SILHUETA_E_SOMBREAMENTO = __c.next()
+
+# auxiliary definitions (declared after because of the CYCLING algorithm (search SPACE on exercise2.py)
+SILHUETA_AUX = __c.next()  # used on SILHUETA

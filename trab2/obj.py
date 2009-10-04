@@ -65,7 +65,7 @@ class Obj:
 	def show(self, scales, view):
 		# default mode, fallback
 		mode = GL_TRIANGLES
-		glLineWidth(1.0)
+		glLineWidth(2.0)
 
 		if view is ESTRUTURA_DE_ARAME:
 			self.light([0,1,0])  # green
