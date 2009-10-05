@@ -49,7 +49,7 @@ window = 0
 
 # Properties
 scales = 0.5
-positions = [0, 0, -7]  # moving to the right
+positions = [0, 0, 0]  # moving to the right
 rotations = [0, 0, 0]
 
 # The object
