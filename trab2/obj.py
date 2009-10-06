@@ -62,7 +62,7 @@ class Obj:
 			normal = crossProduct(v1, v2)
 			self.normals.append(normal)
 	
-	def show(self, scales, view):
+	def show(self, view, background_color):
 		# default mode, fallback
 		mode = GL_TRIANGLES
 		glLineWidth(2.5)
@@ -73,38 +73,41 @@ class Obj:
 		elif view is SOMBREAMENTO_PLANO:
 			self.light([1,1,1])  # white
 		elif view is ESTRUTURA_DE_ARAME_E_POLIGONOS:
-			self.show(scales, SOMBREAMENTO_PLANO)
-			self.show(scales*1.001, ESTRUTURA_DE_ARAME)  # outer polys
+			self.show(SOMBREAMENTO_PLANO, background_color)
+			self.show(ESTRUTURA_DE_ARAME, background_color)  # outer polys
 		elif view is SOMBREAMENTO_SUAVE:
 			self.light([1,1,1])  # white
 			mode = GL_POLYGON
 		elif view is SILHUETA:
-			self.show(scales, SILHUETA_AUX)  # draws the non-orthogonal polys
+			self.show(SILHUETA_AUX, background_color)  # draws the non-orthogonal polys
 			self.light([1,1,1])  # white
 			glPolygonMode(GL_BACK, GL_LINE)
 			glLineWidth(5.0)
 		elif view is SILHUETA_AUX:
-			self.light([0,0,0])  # black
+			# background 
+			glColor(*background_color)
+			glDisable(GL_LIGHTING)
+			glDisable(GL_LIGHT0)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 		elif view is SILHUETA_E_SOMBREAMENTO:
-			self.show(scales, SILHUETA)
-			self.show(scales*1.001, SOMBREAMENTO_SUAVE)  # outer polys
+			self.show(SOMBREAMENTO_SUAVE, background_color)  # outer polys
+			self.show(SILHUETA, background_color)
 
 		for vertices, normal_vector in izip(self.faces, self.normals):
 			if view is SOMBREAMENTO_SUAVE:
-				drawVertices(mode, vertices, scales, normal_vector)
+				drawVertices(mode, vertices, normal_vector)
 			else:
-				drawVertices(mode, vertices, scales)
+				drawVertices(mode, vertices)
 
-	def light(self, color, alpha = 1.0):
-		"""Setup light 0 and enable lighting"""
+	def light(self, color):
+		"""Defining @color, setup light 0 and enable lighting"""
 		glColor3f(*color)
-		color.append(alpha)
+		color.append(1.0)  # alpha channel
 		glLightfv(GL_LIGHT0, GL_AMBIENT, GLfloat_4(*color))
-		glLightfv(GL_LIGHT0, GL_DIFFUSE, GLfloat_4(1.0, 1.0, 1.0, alpha))
-		glLightfv(GL_LIGHT0, GL_SPECULAR, GLfloat_4(1.0, 1.0, 1.0, alpha))
+		glLightfv(GL_LIGHT0, GL_DIFFUSE, GLfloat_4(1.0, 1.0, 1.0, 1.0))
+		glLightfv(GL_LIGHT0, GL_SPECULAR, GLfloat_4(1.0, 1.0, 1.0, 1.0))
 		glLightfv(GL_LIGHT0, GL_POSITION, GLfloat_4(1.0, 1.0, 1.0, 0.0))
-		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, GLfloat_4(0.2, 0.2, 0.2, alpha))
+		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, GLfloat_4(0.2, 0.2, 0.2, 1.0))
 		glEnable(GL_LIGHTING)
 		glEnable(GL_LIGHT0)
 

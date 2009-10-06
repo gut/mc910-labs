@@ -30,16 +30,13 @@ def crossProduct(v1, v2):
 		v1[0] * v2[1] - v1[1] * v2[0]
 	)
 
-def drawVertices(mode, vertices, scales, normal_vector = False):
+def drawVertices(mode, vertices, normal_vector = False):
 	"""Draw the @vertices within the @mode declared on glBegin.
 	Also declare a glNormal3fv if @normal_vector is given"""
 	glBegin(mode)
 	if normal_vector:
-		glNormal3fv(normal_vector)
+		glNormal(*normal_vector)
 	for vertex in vertices:
-		# let's scale it
-		vertex_scaled = map(lambda x : x*scales, vertex)
-		vertex_to_use = vertex_scaled
-		glVertex3fv(vertex_to_use)
+		glVertex(vertex)
 	glEnd()
 

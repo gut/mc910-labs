@@ -51,6 +51,7 @@ window = 0
 scales = 0.5
 positions = [0, 0, 0]  # moving to the right
 rotations = [0, 0, 0]
+background_color = (0.9, 0.8, 0.7, 0.0)
 
 # The object
 obj = None
@@ -68,7 +69,7 @@ current_view = views[0]
 
 # A general OpenGL initialization function.  Sets all of the initial parameters. 
 def InitGL(Width, Height):				# We call this right after our OpenGL window is created.
-	glClearColor(0.0, 0.0, 0.0, 0.0)	# This Will Clear The Background Color To Black
+	glClearColor(*background_color)	# This Will Clear The Background Color To Orange
 	glClearDepth(1.0)					# Enables Clearing Of The Depth Buffer
 	glDepthFunc(GL_LESS)				# The Type Of Depth Test To Do
 	glEnable(GL_DEPTH_TEST)				# Enables Depth Testing
@@ -98,12 +99,13 @@ def ReSizeGLScene(Width, Height):
 def DrawGLScene():
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)	# Clear The Screen And The Depth Buffer
 	glLoadIdentity()  # Reset The View
-	glTranslatef(*positions)  # Move
-	glRotatef(rotations[0], 1.0,0.0,0.0)  # Rotate On It's X Axis
-	glRotatef(rotations[1], 0.0,1.0,0.0)  # Rotate On It's Y Axis
-	glRotatef(rotations[2], 0.0,0.0,1.0)  # Rotate On It's Z Axis
+	glScale(scales, scales, scales)
+	glTranslate(*positions)  # Move
+	glRotate(rotations[0], 1.0,0.0,0.0)  # Rotate On It's X Axis
+	glRotate(rotations[1], 0.0,1.0,0.0)  # Rotate On It's Y Axis
+	glRotate(rotations[2], 0.0,0.0,1.0)  # Rotate On It's Z Axis
 	# loads our object
-	obj.show(scales, current_view)
+	obj.show(current_view, background_color)
 	# since this is double buffered, swap the buffers to display what just got drawn. 
 	glutSwapBuffers()
 
