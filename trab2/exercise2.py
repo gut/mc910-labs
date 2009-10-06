@@ -73,6 +73,7 @@ def InitGL(Width, Height):				# We call this right after our OpenGL window is cr
 	glClearDepth(1.0)					# Enables Clearing Of The Depth Buffer
 	glDepthFunc(GL_LESS)				# The Type Of Depth Test To Do
 	glEnable(GL_DEPTH_TEST)				# Enables Depth Testing
+	glEnable(GL_NORMALIZE)				# Avoid wrong scale behaviour
 	glShadeModel(GL_SMOOTH)				# Enables Smooth Color Shading
 	
 	glMatrixMode(GL_PROJECTION)
@@ -98,6 +99,7 @@ def ReSizeGLScene(Width, Height):
 # The main drawing function. 
 def DrawGLScene():
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)	# Clear The Screen And The Depth Buffer
+	glMatrixMode(GL_MODELVIEW)
 	glLoadIdentity()  # Reset The View
 	glScale(scales, scales, scales)
 	glTranslate(*positions)  # Move
