@@ -33,10 +33,12 @@ def crossProduct(v1, v2):
 def drawVertices(mode, vertices, normal_vector = False):
 	"""Draw the @vertices within the @mode declared on glBegin.
 	Also declare a glNormal3fv if @normal_vector is given"""
+	glEnable(GL_NORMALIZE)
 	glBegin(mode)
 	if normal_vector:
 		glNormal(*normal_vector)
 	for vertex in vertices:
 		glVertex(vertex)
 	glEnd()
+	glDisable(GL_NORMALIZE)
 

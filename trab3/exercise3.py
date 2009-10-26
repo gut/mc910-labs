@@ -67,24 +67,29 @@ views = [
 		SILHUETA,
 		SILHUETA_E_SOMBREAMENTO,
 	]
-current_view = views[0]
+current_view = views[3]  # Default: SOMBREAMENTO_SUAVE
 
-def LoadTextures():
+def getTextures():
+	"""Sorts the bmp, gif, jpg and png files found under textures/"""
+	from glob import glob
+	return sorted(glob('textures/*.[bBgGjJpP][mMiIpPnN][pPfFgG]'))
+
+def loadTexture(src):
 	import Image
 	#global texture
-	image = Image.open(img_src)
+	image = Image.open(src)
 	
 	ix = image.size[0]
 	iy = image.size[1]
 	image = image.tostring("raw", "RGBX", 0, -1)
 	
 	# Create Texture
-	# There does not seem to be support for this call or the version of PyOGL I have is broken.
-	#glGenTextures(1, texture)
-	#glBindTexture(GL_TEXTURE_2D, texture)   # 2d texture (x and y size)
-	
 	glPixelStorei(GL_UNPACK_ALIGNMENT,1)
 	glTexImage2D(GL_TEXTURE_2D, 0, 3, ix, iy, 0, GL_RGBA, GL_UNSIGNED_BYTE, image)
+
+def setupTexture():
+	loadTexture(getTextures()[0])  # loads any texture
+	glEnable(GL_TEXTURE_2D)
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
@@ -93,11 +98,9 @@ def LoadTextures():
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
 	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
 
-
 # A general OpenGL initialization function.  Sets all of the initial parameters. 
 def InitGL(Width, Height):				# We call this right after our OpenGL window is created.
-	LoadTextures()
-	glEnable(GL_TEXTURE_2D)
+	setupTexture()
 	glClearColor(*background_color)	# This Will Clear The Background Color To Orange
 	glClearDepth(1.0)					# Enables Clearing Of The Depth Buffer
 	glDepthFunc(GL_LESS)				# The Type Of Depth Test To Do
@@ -128,8 +131,8 @@ def ReSizeGLScene(Width, Height):
 # The main drawing function. 
 def DrawGLScene():
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)	# Clear The Screen And The Depth Buffer
-	glMatrixMode(GL_MODELVIEW)
-	glLoadIdentity()  # Reset The View
+	glPushMatrix()
+
 	glScale(scales, scales, scales)
 	glTranslate(*positions)  # Move
 	glRotate(rotations[0], 1.0,0.0,0.0)  # Rotate On It's X Axis
@@ -137,6 +140,8 @@ def DrawGLScene():
 	glRotate(rotations[2], 0.0,0.0,1.0)  # Rotate On It's Z Axis
 	# loads our object
 	obj.show(current_view, background_color)
+
+	glPopMatrix()
 	# since this is double buffered, swap the buffers to display what just got drawn. 
 	glutSwapBuffers()
 
@@ -150,7 +155,7 @@ def keyPressed(*args):
 	elif args[0] == SPACE:
 		# cicle through views
 		current_view = (views.index(current_view) + 1) % len(views)
-		print " Switching view to: %s" % views_name[current_view]
+		print " * Switching view to: %s" % views_name[current_view]
 	elif args[0] == BIGGER:
 		scales += .1
 	elif args[0] == SMALLER:
@@ -176,6 +181,13 @@ def keyPressed(*args):
 		positions[1] -= .1
 	elif args[0] == GLUT_KEY_LEFT:
 		positions[0] -= .1
+	else:
+		# texture?
+		letter_zero = 48
+		for nb, tex in enumerate(getTextures()):
+			if args[0] == chr(letter_zero + nb):
+				loadTexture(tex)
+				print " * Loading '%s' texture" % tex
 
 def main(filename):
 	"""Exercise #2 of mc930. Loading a obj file"""
@@ -291,7 +303,8 @@ Try `%s --help' for more information""" % args[0].split(sep)[-1]
 	print "p key: -Piches the object (through the Z axis)."
 	print ""
 	print "Texture pattern selection:"
-	print " 1 - "
+	for nb, tex in enumerate(getTextures()):
+		print " %s - %s" % (chr(48 + nb), tex)  # chr(48) == '0'
 	print ""
 
 	glutMainLoop()

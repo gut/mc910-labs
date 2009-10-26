@@ -88,6 +88,7 @@ class Obj:
 			glColor(*background_color)
 			glDisable(GL_LIGHTING)
 			glDisable(GL_LIGHT0)
+			glDisable(GL_TEXTURE_2D)
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
 		elif view is SILHUETA_E_SOMBREAMENTO:
 			self.show(SOMBREAMENTO_SUAVE, background_color)  # outer polys
@@ -110,4 +111,5 @@ class Obj:
 		glLightModelfv(GL_LIGHT_MODEL_AMBIENT, GLfloat_4(0.2, 0.2, 0.2, 1.0))
 		glEnable(GL_LIGHTING)
 		glEnable(GL_LIGHT0)
+		glEnable(GL_TEXTURE_2D)
 
