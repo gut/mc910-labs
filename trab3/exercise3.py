@@ -51,6 +51,7 @@ scales = 0.5
 positions = [0, 0, 0]  # moving to the right
 rotations = [0, 0, 0]
 background_color = (0.9, 0.8, 0.7, 0.0)
+img_src = "textures/bricks.bmp"
 
 # The object
 obj = None
@@ -58,7 +59,7 @@ obj = None
 def LoadTextures():
 	import Image
 	#global texture
-	image = Image.open("NeHe.bmp")
+	image = Image.open(img_src)
 	
 	ix = image.size[0]
 	iy = image.size[1]
@@ -202,8 +203,6 @@ def main(filename):
 	# Register the function called when the keyboard is pressed.  
 	glutKeyboardFunc(keyPressed)
 	glutSpecialFunc(keyPressed)
-	# Register mouse events for rotating the perspective
-	glutMotionFunc(mouseMoved)
 	
 	# Initialize our window. 
 	InitGL(640, 480)
