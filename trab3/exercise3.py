@@ -106,7 +106,19 @@ def InitGL(Width, Height):				# We call this right after our OpenGL window is cr
 	glDepthFunc(GL_LESS)				# The Type Of Depth Test To Do
 	glEnable(GL_DEPTH_TEST)				# Enables Depth Testing
 	glEnable(GL_NORMALIZE)				# Avoid wrong scale behaviour
+	glEnable(GL_COLOR_MATERIAL)
 	glShadeModel(GL_SMOOTH)				# Enables Smooth Color Shading
+
+	# Light
+	glMaterial(GL_FRONT,GL_SPECULAR, GLfloat_4(1.0, 1.0, 1.0, 1.0))
+	glMaterial(GL_FRONT,GL_SHININESS, 60)
+	glLightfv(GL_LIGHT0, GL_AMBIENT, GLfloat_4(0.2, 0.2, 0.2, 1.0))
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, GLfloat_4(0.7, 0.7, 0.7, 1.0))
+	glLightfv(GL_LIGHT0, GL_SPECULAR, GLfloat_4(1.0, 1.0, 1.0, 1.0))
+	glLightfv(GL_LIGHT0, GL_POSITION, GLfloat_4(1.0, 1.0, 2.0, 1.0))
+	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, GLfloat_4(0.2, 0.2, 0.2, 1.0))
+	glEnable(GL_LIGHTING)
+	glEnable(GL_LIGHT0)
 	
 	glMatrixMode(GL_PROJECTION)
 	glLoadIdentity()					# Reset The Projection Matrix
