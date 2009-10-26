@@ -33,6 +33,7 @@ import sys
 # Some api in the chain is translating the keystrokes to this octal string
 # so instead of saying: ESCAPE = 27, we use the following.
 ESCAPE = '\033'
+SPACE = '\040'
 BIGGER = '+'
 SMALLER = '-'
 ROT_X_PLUS = 'R'
@@ -55,6 +56,18 @@ img_src = "textures/bricks.bmp"
 
 # The object
 obj = None
+
+# views availables
+from views_definition import *
+views = [
+		ESTRUTURA_DE_ARAME,
+		SOMBREAMENTO_PLANO,
+		ESTRUTURA_DE_ARAME_E_POLIGONOS,
+		SOMBREAMENTO_SUAVE,
+		SILHUETA,
+		SILHUETA_E_SOMBREAMENTO,
+	]
+current_view = views[0]
 
 def LoadTextures():
 	import Image
@@ -123,17 +136,21 @@ def DrawGLScene():
 	glRotate(rotations[1], 0.0,1.0,0.0)  # Rotate On It's Y Axis
 	glRotate(rotations[2], 0.0,0.0,1.0)  # Rotate On It's Z Axis
 	# loads our object
-	obj.show()
+	obj.show(current_view, background_color)
 	# since this is double buffered, swap the buffers to display what just got drawn. 
 	glutSwapBuffers()
 
 # The function called whenever a key is pressed. Note the use of Python tuples to pass in: (key, x, y)  
 def keyPressed(*args):
 	# If escape is pressed, kill everything.
-	global scales
+	global scales, current_view
 	if args[0] == ESCAPE:
 		glutDestroyWindow(window)
 		sys.exit()
+	elif args[0] == SPACE:
+		# cicle through views
+		current_view = (views.index(current_view) + 1) % len(views)
+		print " Switching view to: %s" % views_name[current_view]
 	elif args[0] == BIGGER:
 		scales += .1
 	elif args[0] == SMALLER:
@@ -262,6 +279,7 @@ Try `%s --help' for more information""" % args[0].split(sep)[-1]
 	print "Commands:"
 	print "========="
 	print "ESC key: Quit."
+	print "SPACE key: Switches the view."
 	print "+ key: Makes the object bigger."
 	print "- key: Makes the object smaller."
 	print "ARROW keys: Moves the object."
