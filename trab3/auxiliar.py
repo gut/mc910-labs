@@ -39,6 +39,7 @@ def drawVertices(mode, vertices, normal_vector = False):
 		glNormal(*normal_vector)
 	for vertex in vertices:
 		glVertex(vertex)
+		glTexCoord2f(vertex[0], vertex[1])
 	glEnd()
 	glDisable(GL_NORMALIZE)
 

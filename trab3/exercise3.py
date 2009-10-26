@@ -50,7 +50,7 @@ window = 0
 # Properties
 scales = 0.5
 positions = [0, 0, 0]  # moving to the right
-rotations = [0, 0, 0]
+rotations = [1, 0, 0]
 background_color = (0.9, 0.8, 0.7, 0.0)
 img_src = "textures/bricks.bmp"
 
@@ -84,19 +84,21 @@ def loadTexture(src):
 	image = image.tostring("raw", "RGBX", 0, -1)
 	
 	# Create Texture
-	glPixelStorei(GL_UNPACK_ALIGNMENT,1)
 	glTexImage2D(GL_TEXTURE_2D, 0, 3, ix, iy, 0, GL_RGBA, GL_UNSIGNED_BYTE, image)
+	# gluBuild2DMipmaps(GL_TEXTURE_2D, 3, ix, iy, GL_RGB, GL_UNSIGNED_BYTE, image)
 
 def setupTexture():
-	loadTexture(getTextures()[0])  # loads any texture
-	glEnable(GL_TEXTURE_2D)
+
+	glMultiTexCoord2f
+	glEnable(GL_TEXTURE_2D | GL_TEXTURE_GEN_S | GL_TEXTURE_GEN_T)
+	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+	loadTexture(getTextures()[0])  # loads any texture
 
 # A general OpenGL initialization function.  Sets all of the initial parameters. 
 def InitGL(Width, Height):				# We call this right after our OpenGL window is created.
