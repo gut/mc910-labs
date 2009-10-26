@@ -42,6 +42,7 @@ ROT_Y_PLUS = 'Y'
 ROT_Y_MINUS = 'y'
 ROT_Z_PLUS = 'P'
 ROT_Z_MINUS = 'p'
+ASCII_ONE = 49
 
 
 # Number of the glut window.
@@ -197,9 +198,8 @@ def keyPressed(*args):
 		positions[0] -= .1
 	else:
 		# texture?
-		letter_zero = 48
 		for nb, tex in enumerate(getTextures()):
-			if args[0] == chr(letter_zero + nb):
+			if args[0] == chr(ASCII_ONE + nb):
 				loadTexture(tex)
 				print " * Loading '%s' texture" % tex
 
@@ -318,7 +318,7 @@ Try `%s --help' for more information""" % args[0].split(sep)[-1]
 	print ""
 	print "Texture pattern selection:"
 	for nb, tex in enumerate(getTextures()):
-		print " %s - %s" % (chr(48 + nb), tex)  # chr(48) == '0'
+		print " %s: %s" % (chr(ASCII_ONE + nb), tex)
 	print ""
 
 	glutMainLoop()
